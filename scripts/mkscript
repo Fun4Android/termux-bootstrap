@@ -1,0 +1,62 @@
+#!/data/data/com.termux/files/usr/bin/bash 
+
+# this program is still UNDER CONSTRUCTION
+# make shell scripts for bash
+
+# set exit status values as constants
+declare -gir FILERR=1 # file errors
+declare -gir PERERR=2 # permission errors
+declare -gir EDTERR=3 # editor errors
+
+# no arguments were given
+if (( 0 == $# )); then
+	echo "Nothing to do."
+	exit 0
+fi
+
+# source mkscript functions
+if [[ -f ~/bin/mkscript.config ]]; then
+	. ~/bin/mkscript.config
+	echo "mkscript.config found."
+	echo "attempting to execute script..."
+else
+	echo "~/bin/mkscript.config is missing."
+	echo "Aborting now."
+	exit $FILERR
+fi
+
+# process one file at a time and concatenate 
+# the filenames to a set to be processed by 
+# default/chosen editor
+while [[ 0 -lt $# ]]; do
+	filename=$1
+	
+	_check_file_existence "$filename"
+
+	_make_new_file "$filename"
+
+	_set_file_permissions "$filename"
+
+	fileset="$filename $fileset"
+
+	shift
+done
+
+if [[ ! -s ~/.vimrc ]]; then
+	_output_vim_config > ~/.vimrc
+	echo "Created ~/.vimrc file."
+else
+	echo "~/.vimrc file already exists."
+	echo "Attempting to open files using [g]vi[m]"
+fi
+
+_open_editor "$fileset" # function incomplete, use vim for now
+
+if (( 0 == $? )); then
+	echo "Opened file(s): '$fileset'"
+	exit 0
+else
+	echo "An error occurred opening file(s): '$fileset'"
+	exit $FILERR
+fi
+
