@@ -25,13 +25,13 @@ _handle_bash_symlink_ () {
 
 # handle missing bash.bashrc file
 _handle_bash_bashrc_ () {	
-	# check if backup is present
-	if [[ -e "${ETC}/bash.bashrc.backup" ]]; then
+	# check if original is present
+	if [[ -e "${ARCHIVE}/bash.bashrc.original" ]]; then
 		output_status "${GREEN} * ${BLANK} Restored original bash.bashrc file..." 1
 		
-		mv -v ${ETC}/bash.bashrc.backup ${ETC}/bash.bashrc
+		mv -v ${ARCHIVE}/bash.bashrc.original ${ETC}/bash.bashrc
 	
-	# if backup is missing, check if auto-generated script is present
+	# if original is missing, check if auto-generated script is present
 	elif [[ -e ${ARCHIVE}/bash.bashrc ]]; then
 		output_status "${YELLOW} * Exception${BLANK}: Missing bash.bashrc.backup file..." 1
 		
@@ -55,10 +55,10 @@ _handle_bash_bashrc_ () {
 remove_apps () {
 	output_status "${GREEN} * ${BLANK}Using ${GREEN}apt${BLANK} to remove base packages..." 1
 	
-	apt remove make vim git gcc g++ gdb python2 \
+	apt remove make vim git clang gdb python2 \
 	coreutils findutils grep \
 	man linux-man-pages \
-	openssh wget whois -y
+	openssh wget -y
 	
 	apt autoremove
 	

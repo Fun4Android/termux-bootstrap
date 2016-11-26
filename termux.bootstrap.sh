@@ -17,7 +17,6 @@ OPTION="$1"
 ACTION="$2"
 
 # set exit codes
-SUCCESS=0
 FAILURE=1
 FILE_ERROR=2
 DIR_ERROR=3
@@ -31,7 +30,7 @@ source_files () {
 		if [[ -s "${filepath}" ]]; then
 			source "${filepath}"	
 		else
-			echo -e "Error: missing '${filename}'.\nExiting now."
+			echo -e "Error: '${filename}' is missing or corrupt.\nExiting now."
 			exit $FILE_ERROR
 		fi
 		
@@ -46,40 +45,50 @@ main () { # main program
 	case "$OPTION" in
 		-h|--help)
 			echo_usage_summary
-
-			exit $SUCCESS
+			
+			exit
 			;;
 		-b|--backup)
+			check_if_root
+
+			check_environment
+
 			backup_home_dir
 			
-			exit $SUCCESS
+			output_status "${GREEN} * Successful backup.${BLANK}"
+			
+			exit
 			;;
 		-i|--install)
+			check_if_root
+
+			check_environment
+
 			install "$ACTION"
 			
-			output_status "${GREEN} * Installation Successful. Done.${BLANK}"
+			output_status "${GREEN} * Successful installation.${BLANK}"
 			
-			exit $SUCCESS
+			exit
 			;;
 		-r|--remove)
+			check_if_root
+
+			check_environment
+
 			remove "$ACTION"
 			
-			exit $SUCCESS
+			output_status "${GREEN} * Successful removal.${BLANK}"
+
+			exit
 			;;
 		
 		*)
 			echo_usage_notice
-
-			exit $SUCCESS
+			
+			exit
 			;;
 	esac
 }
-
-# TEST IF EXECUTED AS ROOT
-check_if_root
-
-# VALIDATE ENV VARIABLES
-check_environment
 
 # CALL MAIN PROGRAM
 main

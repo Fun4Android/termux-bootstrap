@@ -425,25 +425,46 @@ cat << '_EOF_'
 
 keywords=("update" "upgrade" "autoremove")
 
-for word in "${keywords[@]}"; do
-	if [[ "upgrade" == "$word" ]]; then
-		apt "$word" -y
-	else
-		apt "$word"
+pip2_updates () {
+	if [[ -n "$(which pip2)" ]]; then	
+		pip2 install --upgrade pip
+		
+		pip_pkg=$(pip2 list | cut -d ' ' -f 1)
+		
+		if [[ -n "$pip_pkg" ]]; then
+			pip2 install --upgrade "$pip_pkg"
+		fi
 	fi
-done
+}
 
-if [[ -n "$(which pip2)" ]]; then
-	pip_bin=$(which pip2)
-else
-	pip_bin=$(which pip)
-fi
+pip_updates () {
+	if [[ -n "$(which pip)" ]]; then	
+		pip install --upgrade pip
+		
+		pip_pkg=$(pip list | cut -d ' ' -f 1)
+		
+		if [[ -n "$pip_pkg" ]]; then
+			pip install --upgrade "$pip_pkg"
+		fi
+	fi	
+}
 
-pip_pkg=$($pip_bin list | cut -d ' ' -f 1)
-	
-if [[ -n "$pip_bin" && -n "$pip_pkg" ]]; then
-	"$pip_bin" install --upgrade "$pip_pkg"
-fi
+updates () {
+	for word in "${keywords[@]}"; do
+		if [[ "upgrade" == "$word" ]]; then
+			apt "$word" -y
+		else
+			apt "$word"
+		fi
+	done
+}
+
+updates
+
+pip2_updates
+
+pip_updates
+
 _EOF_
 	) > "${SCRIPTS}/update"
 }

@@ -36,7 +36,7 @@ _git_setup_prompt_ () {
 	local NOUN="$1"
 
 	while [[ -z "$REPLY" ]]; do
-		read -p "${YELLOW} * ${BLANK}Enter your ${YELLOW}${NOUN}${BLANK} for git: "
+		read -p " * Enter your ${NOUN} for git: "
 	done
 
 	echo "$REPLY"
@@ -47,15 +47,15 @@ _check_var_status_ () {
 	local variable="$1"
 	local value="$2"
 	if [[ -z "$value" ]]; then
-		echo "${RED} * Error${BLANK}: variable '${RED}${variable}${BLANK}' contains an unset value..."
+		echo -e "${RED} * Error${BLANK}: variable '${RED}${variable}${BLANK}' contains an unset value..."
 		exit $ENV_ERROR
 		
 	elif [[ ! -d "$value" ]]; then
-		echo "${RED} * Error${BLANK}: variable '${RED}${variable}${BLANK}' does not contain a valid file path..."
+		echo -e "${RED} * Error${BLANK}: variable '${RED}${variable}${BLANK}' does not contain a valid file path..."
 		exit $DIR_ERROR
 		
 	else
-		echo "${GREEN} * Environment Variable${BLANK}: '${variable}'... ${GREEN}ok${BLANK}."
+		echo -e "${GREEN} * Environment Variable${BLANK}: '${variable}'... ${GREEN}ok${BLANK}."
 		
 	fi
 }
@@ -69,8 +69,18 @@ output_status () {
 	local string="$1"
 	local delay="$2"
 
+	if [[ -z "$string" ]]; then
+			echo -e "${RED} * Error${BLANK}: missing string argument for function ${RED}output_status${BLANK}..."
+			echo "Exiting now."
+			exit $FAILURE
+	fi
+	
+	if [[ -z "$delay" ]]; then
+		delay=0
+	fi
+	
 	echo
-	echo "$string"
+	echo -e "$string"
 	
 	sleep $delay
 }

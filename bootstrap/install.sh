@@ -4,20 +4,32 @@
 #
 
 # update python modules using pip
-_install_pip_updates_ () {
-	if [[ -n "$(which pip2)" ]]; then
-		local pip_bin=$(which pip2)
-	else
-		local pip_bin=$(which pip)
+_install_pip2_updates_ () {
+	output_status "${GREEN} * ${BLANK}Attempting to update '${GREEN}pip2${BLANK}'..." 1
+	
+	if [[ -n "$(which pip2)" ]]; then	
+		pip2 install -U pip
+		
+		pip_pkg="$(pip2 list -o | cut -d ' ' -f 1)"
+		
+		if [[ -n "$pip_pkg" ]]; then
+			pip2 install -U $pip_pkg
+		fi
 	fi
+}
 
-	output_status "${GREEN} * ${BLANK}Attempting to update '${GREEN}${pip_bin}${BLANK}'..." 1
+_install_pip_updates_ () {
+	output_status "${GREEN} * ${BLANK}Attempting to update '${GREEN}pip${BLANK}'..." 1
 	
-	local pip_pkg=$($pip_bin list | cut -d ' ' -f 1)
-	
-	if [[ -n "$pip_bin" && -n "$pip_pkg" ]]; then
-		"$pip_bin" install --upgrade "$pip_pkg"
-	fi
+	if [[ -n "$(which pip)" ]]; then	
+		pip install -U pip
+		
+		pip_pkg=$(pip list -o | cut -d ' ' -f 1)
+		
+		if [[ -n "$pip_pkg" ]]; then
+			pip install --upgrade "$pip_pkg"
+		fi
+	fi	
 }
 
 # create required directories for script install
@@ -26,12 +38,12 @@ _require_dirs_ () {
 	
 	# make sure archive dir exits in HOME
 	if [[ ! -d ${ARCHIVE} ]]; then
-		mkdir -v ${ARCHIVE}
+		mkdir ${ARCHIVE}
 	fi
 		
 	# make sure bin dir exists in HOME
 	if [[ ! -d ${BIN} ]]; then
-		mkdir -v ${BIN}
+		mkdir ${BIN}
 	fi
 }
 
@@ -41,18 +53,19 @@ _install_archive_ () {
 
 	# copy mkscript to ARCHIVE if SCRIPTS existed
 	if [[ -n "$MKSCRIPT" ]]; then
-		cp -v ${SCRIPTS}/mkscript ${ARCHIVE}/
-		cp -v ${SCRIPTS}/mkscript.config ${ARCHIVE}/
+		cp ${SCRIPTS}/mkscript ${ARCHIVE}/
+		cp ${SCRIPTS}/mkscript.config ${ARCHIVE}/
 	fi
 	
 	# archive the scripts
-	for filename in ${SCRIPTS}/*; do
+	for filepath in ${SCRIPTS}/*; do
+		local filename=${filepath##*/}
 		# do NOT move mkscript or vimrc to archive
 		if [[ "$filename" =~ ^mkscript || "vimrc" == "$filename" ]]; then
 			continue
 		fi
 		
-		mv -v ${SCRIPTS}/${filename} ${ARCHIVE}/
+		mv "$filepath" ${ARCHIVE}/
 	done
 }
 
@@ -60,16 +73,18 @@ _install_archive_ () {
 _install_symlinks_ () {
 	output_status "${GREEN} * ${BLANK}Populating termux with symlinks..." 1
 
-	ln -vs ${ARCHIVE}/bash.bashrc ${ETC}/bash.bashrc
-	ln -vs ${ARCHIVE}/bash.aliases ${HOME}/.bash.aliases
+	ln -s ${ARCHIVE}/bash.bashrc ${ETC}/bash.bashrc
+	ln -s ${ARCHIVE}/bash.aliases ${HOME}/.bash.aliases
 	
-	for filename in ${ARCHIVE}/*; do
+	for filepath in ${ARCHIVE}/*; do
+		local filename=${filepath##*/}
+		
 		# bash config files have unique locations
 		if [[ "$filename" =~ ^bash ]]; then
 			continue
 		fi
 		
-		ln -vs ${ARCHIVE}/${filename} ${BIN}/${filename}
+		ln -s "$filepath" "${BIN}/${filename}"
 	done
 }
 
@@ -79,65 +94,69 @@ _install_symlinks_ () {
 
 # update termux and install core apps using apt
 install_applications () {
-	output_status "${GREEN} * ${BLANK}Using ${GREEN}apt${BLANK} to update and upgrade..." 1
+	output_status "${GREEN} * Using apt to update and upgrade...${BLANK}" 2
 	
-	apt update && apt upgrade -y
+	apt-get -qq update && apt-get -qq upgrade -y
 
-	output_status "${GREEN} * ${BLANK}Using ${GREEN}apt${BLANK} to install core packages..." 1
+	output_status "${GREEN} * Using apt to install core packages...${BLANK}" 2
 	
-	apt install make vim git gcc g++ gdb python2 \
+	# whois is available via busybox
+	# clang replaces gcc and g++ (gcc and g++ are deprecated)
+	# https://github.com/termux/termux-packages/issues/407
+	apt-get -qq install make vim git clang gdb python2 \
 	coreutils findutils grep \
 	man linux-man-pages \
-	openssh wget whois -y
+	openssh wget -y
 	
 	_install_pip_updates_
+	_install_pip2_updates_
 }
 
 # wrapper for writing scripts/configs to disk
 write_scripts () {
-	output_status "${GREEN} * ${BLANK}Attempting to write core scripts to disk..." 1
+	output_status "${GREEN} * Attempting to write core scripts to disk...${BLANK}" 2
 	
 	# if the scripts dir is missing, assume mkscript is missing too
 	if [[ ! -d "${SCRIPTS}" ]]; then
 		MKSCRIPT=""
-		mkdir -v "$SCRIPTS"
+		mkdir "$SCRIPTS"
 	fi
 	
-	_write_bash_bashrc
-	_write_bash_aliases
-	_write_patchme
-	_write_pylist
-	_write_update
-	_write_vimrc
-	_write_gitconfig
+	write_bash_bashrc
+	write_bash_aliases
+	write_patchme
+	write_pylist
+	write_update
+	write_vimrc
+	write_gitconfig
 	
 	# only if user has rooted device
 	if [[ -n "$(which su)" ]]; then
-		_write_sudo
+		write_sudo
 	fi
 }
 
 # wrapper for creating HOME directories
 setup_local_storage () {
-	output_status "${GREEN} * ${BLANK}Creating HOME directories..." 1
+	output_status "${GREEN} * Creating HOME directories...${BLANK}" 2
 
 	# creates ~/storage with symlinks to internal and external sdcards
 	termux-setup-storage
 
 	# create base directory structure for HOME dir
-	mkdir -v ${HOME}/bin ${HOME}/python ${HOME}/c ${HOME}/cpp \
-	${HOME}/bash ${HOME}/storage ${HOME}/archive
+	mkdir ${HOME}/bin ${HOME}/python ${HOME}/c ${HOME}/cpp \
+	${HOME}/bash ${HOME}/archive
 }
 
 # wrapper for installing scripts
 install_scripts () { 
-	output_status "${GREEN} * Installing base scripts...${BLANK}" 1
+	output_status "${GREEN} * Installing base scripts...${BLANK}" 2
 
 	# create BIN and ARCHIVE dirs if missing
 	_require_dirs_
 	
 	# backup original bash.bashrc file
-	mv -v ${ETC}/bash.bashrc ${ETC}/bash.bashrc.backup
+	mv -v ${ETC}/bash.bashrc ${ARCHIVE}/bash.bashrc.original
 	
 	# copy/move generated scripts to ~/archive/termux
 	_install_archive_
@@ -146,7 +165,7 @@ install_scripts () {
 	_install_symlinks_
 	
 	# general configs reside in HOME
-	mv -v ${SCRIPTS}/vimrc ${HOME}/.vimrc
+	mv ${SCRIPTS}/vimrc ${HOME}/.vimrc
 }
 
 #
@@ -163,9 +182,9 @@ install () {
 			
 			write_scripts
 			
-			install_scripts
-			
 			setup_local_storage
+			
+			install_scripts
 
 			;;
 			
