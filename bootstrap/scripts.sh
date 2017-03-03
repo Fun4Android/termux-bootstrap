@@ -18,14 +18,6 @@ HOME=/data/data/com.termux/files/home
 PREFIX=/data/data/com.termux/files/usr
 LD_LIBRARY_PATH=/data/data/com.termux/files/usr/lib
 
-# set internal sdcard path
-SDCARD=/storage/emulated/0
-
-# set the external sdcard path
-if [[ -d ${HOME}/storage/external ]]; then
-	EXTSDCARD=${HOME}/storage/external
-fi
-
 # source the bin path for home directory
 if [[ -d ${HOME}/bin ]]; then
 	PATH=${HOME}/bin:${PATH}
@@ -42,6 +34,9 @@ fi
 # use the 'find' command to locate it (you may need su installed
 # depending on your device). for example, as a normal user,
 # 	$ find / ! -readable -prune -o -print -type f | grep bash | less
+
+use_color=true
+
 if [[ ${EUID} == 0 ]] ; then
 	PS1='\[\033[01;31m\]\h\[\033[01;34m\] \W \$\[\033[00m\] '
 else
@@ -49,12 +44,14 @@ else
 fi
 
 # export environmental paths
-export HOME PREFIX PATH LD_LIBRARY_PATH PYTHONPATH SDCARD EXTSDCARD PS1
+export HOME PREFIX PATH LD_LIBRARY_PATH PYTHONPATH PS1
 
 # source aliases for bash
 if [[ -f ${HOME}/.bash.aliases ]]; then
 	. ${HOME}/.bash.aliases
 fi
+
+unset use_color
 _EOF_
 	) > "${SCRIPTS}/bash.bashrc"
 }
@@ -68,16 +65,16 @@ cat << '_EOF_'
 # set aliases for bash
 
 # enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
+if [ -x "${PREFIX}/bin/dircolors" ]; then
     test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    alias dir='dir --color=auto'
-    alias vdir='vdir --color=auto'
+    alias ls='ls --color=always'
+    alias dir='dir --color=always'
+    alias vdir='vdir --color=always'
     
     # set aliases for grep
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+    alias grep='grep --color=always'
+    alias fgrep='fgrep --color=always'
+    alias egrep='egrep --color=always'
 fi
 
 # set aliases for ls
@@ -429,7 +426,7 @@ pip2_updates () {
 	if [[ -n "$(which pip2)" ]]; then	
 		pip2 install --upgrade pip
 		
-		pip_pkg=$(pip2 list | cut -d ' ' -f 1)
+		pip_pkg=$(pip2 list -o --format=legacy | cut -d ' ' -f 1)
 		
 		if [[ -n "$pip_pkg" ]]; then
 			pip2 install --upgrade "$pip_pkg"
@@ -437,21 +434,21 @@ pip2_updates () {
 	fi
 }
 
-pip_updates () {
-	if [[ -n "$(which pip)" ]]; then	
-		pip install --upgrade pip
+pip3_updates () {
+	if [[ -n "$(which pip3)" ]]; then	
+		pip3 install --upgrade pip
 		
-		pip_pkg=$(pip list | cut -d ' ' -f 1)
+		pip_pkg=$(pip3 list -o --format=legacy | cut -d ' ' -f 1)
 		
 		if [[ -n "$pip_pkg" ]]; then
-			pip install --upgrade "$pip_pkg"
+			pip3 install --upgrade "$pip_pkg"
 		fi
 	fi	
 }
 
 updates () {
 	for word in "${keywords[@]}"; do
-		if [[ "upgrade" == "$word" ]]; then
+		if [[ "upgrade" == "$word" || "autoremove" == "$word" ]]; then
 			apt "$word" -y
 		else
 			apt "$word"
@@ -463,7 +460,7 @@ updates
 
 pip2_updates
 
-pip_updates
+pip3_updates
 
 _EOF_
 	) > "${SCRIPTS}/update"

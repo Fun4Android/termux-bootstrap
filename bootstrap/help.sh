@@ -1,78 +1,223 @@
 #!/data/data/com.termux/files/usr/bin/env bash
 
 echo_usage_notice () {
-	echo "Usage: $PROGNAME [ --help | --backup | --install | --remove ] [ all ]..."
+	echo "Usage: [command | [action]] or [help | [command]]"
 }
 
 echo_usage_summary () {
 cat << _EOF_
-Usage: $PROGNAME [ --help | --backup | --install | --remove ] [ all ]...
+Usage: [command] [action] or [help] [command]
 
 Summary
 -------
-	$PROGNAME installs all the base applications, scripts, and configuration
-	files used for base development in Termux. This way you can do Bash, C, 
-	C++, python2, python3, or whatever your heart desires on the go.
-		
-	If you would like a full installation, just invoke $PROGNAME with the 
-	install option.
+	$PROGNAME installs all the base applications, scripts, and configuration files used for base development in Termux. This way you can do Bash, C, C++, python2, python3, or whatever your heart desires on the go.
 	
-		\$ $PROGNAME --install all
-		
-	Likewise, if you would like a targeted installation type, just invoke 
-	$PROGNAME with the desired option. The following statement below would 
-	invoke installing the base applications in Termux.
-		
-		\$ $PROGNAME --install apps
-		
-	The remove option achieves the inverse of install. That way you can 
-	specify what you would like to remove. The following statement would 
-	remove all directories created by the storage arugment.
-		
-		\$ $PROGNAME --remove storage
-			
-	Whereas, invoking remove with the all argument would completely undo
-	any action invoked by this script.
+	This script uses the 'less' program to display help pages. To quit any help page, just type in q to quit.
+
+	To display this page.
+		-> help
+
+	For detailed help on the [help] command.
+		-> help help
+
+	Not all commands require an action, but the important ones do.
 	
-	NOTE: there are no arguments for the backup option.
-	
-		\$ $PROGNAME --backup
-		
-	This will backup the entire HOME directory which is stored within a tar
-	file. The tar file can be located within the ~/archive directory.
+	For more information, use the following [command] and [action]. This will print out a list of commands.
 
-Options
--------
-	-h --help		Display this help text
-		
-	-i --install	Installs base apps, scripts, and config files
-		
-	-r --remove		Removes base apps, scripts, and/or config files
-		
-	-b --backup		Backs up the current HOME directory
+		-> help commands
 
-Arguments
----------
-	[ all  ]		All apps, scripts, and config files
-		
-	[ apps ]		All applications installed by $PROGNAME
-						make vim git gcc g++ gdb python2
-						coreutils findutils grep
-						man linux-man-pages
-						openssh wget whois
+	For more information about a command, follow the [help] command with a [command] name.
 
-	[ scripts ] 	All scripts installed by $PROGNAME
-						bash.bashrc bash.aliases
-						mkscript mkscript.config
-						sudo patchme connect pylist	update
-						vimrc gitconfig
+		-> help [command]
 
-	[ storage ]		All symlinks created by termux-setup-storage
-						dcim downloads movies
-						music pictures shared
-						external (only if extsdcard is present)
-							
-					All directories created by $PROGNAME
-						storage bin bash c cpp python
+			or, for example,
+
+		-> help install
 _EOF_
+}
+
+echo_usage_commands () {
+cat << _EOF_
+Commands are read as [short] | [long] | [description]
+	[short] is the short command, 
+	[long] is the long command, 
+	[description] is a short description of the command 
+
+Commands
+--------
+	h | help
+		Display this help text.
+		
+	i | install
+		Installs base apps, scripts, and config files
+		
+	r | remove 
+		Removes base apps, scripts, and/or config files
+		
+	b | backup 
+		Backs up the current HOME directory
+
+	c | clear
+		Clears the screen.
+
+	q | quit | bye
+		Quits this program.
+
+Actions
+-------
+	[ all  ]		
+		Installs all apps, scripts, config files, and symlinks.
+		
+	[ apps ]		
+		Installs the following applications using apt-get.
+
+			make vim git gcc g++ gdb python2
+			coreutils findutils grep
+			man linux-man-pages
+			openssh wget whois
+
+	[ scripts ] 	
+		Installs the following scripts and then symlinks them to the working environment. HOME/bin should be where your custom executables reside as well.
+
+			bash.bashrc bash.aliases
+			mkscript mkscript.config
+			sudo patchme connect pylist	update
+			vimrc gitconfig
+
+	[ storage ]		
+		Symlinks created by termux-setup-storage. HOME/storage is where these symlinks will reside.
+
+			dcim downloads movies
+			music pictures shared
+			external (only if extsdcard is present)
+							
+		All directories created by $PROGNAME. These will be placed as regular directories within your HOME directory.
+
+			storage bin bash c cpp python
+_EOF_
+}
+
+echo_usage_help() {
+cat << _EOF_
+Command -> help
+
+For a list of all commands and actions.
+	
+	Usage
+		-> help commands
+
+For information about a specific command.
+
+	Usage
+		-> help [command]
+_EOF_
+}
+
+echo_usage_install () {
+cat << _EOF_
+Command -> install -> remove
+
+The [install] command takes 4 actions.
+	Action
+		all
+		apps
+		scripts
+		storage
+
+To install all selected apps, scripts, and symlinks.
+	Usage
+		-> install
+
+			or
+		-> install all
+
+To install a specific subset by selection.
+	Usage
+		-> install apps
+
+This will install all application using apt-get and will not install scripts or symlinks.
+
+The [remove] command is the inverse of install, but should behave the same non-the-less.
+
+For information about what is installed.
+	Usage
+		-> help commands
+_EOF_
+}
+
+echo_usage_remove () {
+	echo_usage_install
+}
+
+echo_usage_backup () {
+cat << _EOF_
+Command -> backup
+
+The [backup] command takes no actions.
+	Usage
+		-> backup
+
+The backup command creates an archive directory as ${HOME}/archive/ 
+
+Each directory found within the HOME directory is archived and compressed and then moved to the archive directory.
+
+There is currently no inverse operation available.
+
+NOTE: This command does NOT remove any files! It just creates an archive snapshot of your current HOME directory.
+_EOF_
+}
+
+echo_usage_clear() {
+cat << _EOF_
+Command -> clear
+
+The [clear] command takes no actions.
+	Usage
+		-> clear
+
+This command simply clears the screen.
+_EOF_
+}
+
+echo_usage_quit() {
+cat << _EOF_
+Command -> quit -> bye
+
+The [quit] command takes no actions.
+	Usage
+		-> quit
+
+This command simply exits this program.
+_EOF_
+}
+
+echo_usage () {
+	$action="$1"
+
+	case $action in
+		commands)
+			echo_usage_commands | less
+			;;
+		help)
+			echo_usage_help | less
+			;;
+		install)
+			echo_usage_install | less
+			;;
+		remove)
+			echo_usage_remove | less
+			;;
+		backup)
+			echo_usage_remove | less
+			;;
+		clear)
+			echo_usage_clear | less
+			;;
+		quit|bye)
+			echo_usage_quit | less
+			;;
+		*)
+			echo_usage_summary | less
+			;;
+	esac
 }

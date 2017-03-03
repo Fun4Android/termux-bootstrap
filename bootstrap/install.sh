@@ -8,26 +8,26 @@ _install_pip2_updates_ () {
 	output_status "${GREEN} * ${BLANK}Attempting to update '${GREEN}pip2${BLANK}'..." 1
 	
 	if [[ -n "$(which pip2)" ]]; then	
-		pip2 install -U pip
+		pip2 install --upgrade pip
 		
-		pip_pkg="$(pip2 list -o | cut -d ' ' -f 1)"
+		pip_pkg="$(pip2 list -o --format=legacy | cut -d ' ' -f 1)"
 		
 		if [[ -n "$pip_pkg" ]]; then
-			pip2 install -U $pip_pkg
+			pip2 install --upgrade $pip_pkg
 		fi
 	fi
 }
 
 _install_pip_updates_ () {
-	output_status "${GREEN} * ${BLANK}Attempting to update '${GREEN}pip${BLANK}'..." 1
+	output_status "${GREEN} * ${BLANK}Attempting to update '${GREEN}pip3${BLANK}'..." 1
 	
-	if [[ -n "$(which pip)" ]]; then	
-		pip install -U pip
+	if [[ -n "$(which pip3)" ]]; then	
+		pip3 install --upgrade pip
 		
-		pip_pkg=$(pip list -o | cut -d ' ' -f 1)
+		pip_pkg=$(pip3 list -o --format=legacy | cut -d ' ' -f 1)
 		
 		if [[ -n "$pip_pkg" ]]; then
-			pip install --upgrade "$pip_pkg"
+			pip3 install --upgrade "$pip_pkg"
 		fi
 	fi	
 }
@@ -75,6 +75,11 @@ _install_symlinks_ () {
 
 	ln -s ${ARCHIVE}/bash.bashrc ${ETC}/bash.bashrc
 	ln -s ${ARCHIVE}/bash.aliases ${HOME}/.bash.aliases
+
+	if [[ -n "$(which python2)" && -z "$(which python3)" ]]; then
+		ln -s ${PREFIX}/bin/python2 ${PREFIX}/bin/python
+		ln -s ${PREFIX}/bin/pip2 ${PREFIX}/bin/pip
+	fi
 	
 	for filepath in ${ARCHIVE}/*; do
 		local filename=${filepath##*/}

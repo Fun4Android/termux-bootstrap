@@ -12,16 +12,12 @@
 # log the program name
 PROGNAME="$(basename $0)"
 
-# set positional parameters
-OPTION="$1"
-ACTION="$2"
-
 # set exit codes
 FAILURE=1
 FILE_ERROR=2
-DIR_ERROR=3
-PERM_ERROR=4
-ENV_ERROR=5
+DIR_ERROR=4
+PERM_ERROR=8
+ENV_ERROR=16
 
 source_files () {
 	for filename in "$@"; do
@@ -41,54 +37,53 @@ source_files () {
 # sources must be loaded in this exact order !
 source_files "config.sh" "help.sh" "scripts.sh" "install.sh" "remove.sh"
 
-main () { # main program
-	case "$OPTION" in
-		-h|--help)
-			echo_usage_summary
-			
-			exit
+clear
+
+check_if_root
+
+check_environment
+
+echo -e "Type ${GREEN}help${BLANK} for more information."
+echo -e "\t${GREEN}Usage"
+echo -e "\t\t${RED}-${BLANK}> ${GREEN}help${BLANK}"
+
+while true; do
+	cmd=
+	action=
+
+	read -ep "-> " cmd action
+
+	case $cmd in
+		h|help)
+			echo_usage "$action"
 			;;
-		-b|--backup)
-			check_if_root
-
-			check_environment
-
+		b|backup)
 			backup_home_dir
-			
-			output_status "${GREEN} * Successful backup.${BLANK}"
-			
-			exit
-			;;
-		-i|--install)
-			check_if_root
-
-			check_environment
-
-			install "$ACTION"
-			
-			output_status "${GREEN} * Successful installation.${BLANK}"
-			
-			exit
-			;;
-		-r|--remove)
-			check_if_root
-
-			check_environment
-
-			remove "$ACTION"
-			
-			output_status "${GREEN} * Successful removal.${BLANK}"
-
-			exit
-			;;
 		
+			output_status "${GREEN} * Successful backup.${BLANK}"
+			;;
+		i|install)
+			install "$action"
+		
+			output_status "${GREEN} * Successful installation.${BLANK}"
+			;;
+		r|remove)
+			remove "$action"
+		
+			output_status "${GREEN} * Successful removal.${BLANK}"
+			;;
+
+		c|clear)
+			clear
+			;;
+
+		q|quit|bye)
+			echo "Bye."
+			break
+			;;
 		*)
+			echo -e "Command: $cmd\tAction: $action"
 			echo_usage_notice
-			
-			exit
 			;;
 	esac
-}
-
-# CALL MAIN PROGRAM
-main
+done
