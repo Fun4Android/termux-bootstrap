@@ -192,7 +192,11 @@ _EOF_
 }
 
 echo_usage () {
-	$action="$1"
+	if [[ -z "$1" ]];
+		then action="help"
+	else
+		action="$1"
+	fi
 
 	case $action in
 		commands)

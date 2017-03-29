@@ -426,7 +426,7 @@ pip2_updates () {
 	if [[ -n "$(which pip2)" ]]; then	
 		pip2 install --upgrade pip
 		
-		pip_pkg=$(pip2 list -o --format=legacy | cut -d ' ' -f 1)
+		pip_pkg="$(pip2 list -o --format=legacy | cut -d ' ' -f 1)"
 		
 		if [[ -n "$pip_pkg" ]]; then
 			pip2 install --upgrade "$pip_pkg"
@@ -438,7 +438,7 @@ pip3_updates () {
 	if [[ -n "$(which pip3)" ]]; then	
 		pip3 install --upgrade pip
 		
-		pip_pkg=$(pip3 list -o --format=legacy | cut -d ' ' -f 1)
+		pip_pkg="$(pip3 list -o --format=legacy | cut -d ' ' -f 1)"
 		
 		if [[ -n "$pip_pkg" ]]; then
 			pip3 install --upgrade "$pip_pkg"

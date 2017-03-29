@@ -180,7 +180,11 @@ install_scripts () {
 # execute install action
 install () {
 	local action="$1"
-	
+
+	if [[ -z "$action" ]]; then
+		action=all
+	fi
+
 	case "$action" in
 		all)
 			install_applications

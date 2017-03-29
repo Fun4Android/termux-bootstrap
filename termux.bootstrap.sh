@@ -1,11 +1,7 @@
 #!/data/data/com.termux/files/usr/bin/env bash
 #
-# termux.bootstrap.sh -- Automates base installation and configuration for Termux 
+# termux.bootstrap.sh
 #
-# outline:
-# 	termux.bootstrap [ --help | --install | --remove ] [ all ]...
-#		termux.bootstrap --install all -> full install
-#	
 # 	Automates base installation and configuration for Termux environment
 #
 
