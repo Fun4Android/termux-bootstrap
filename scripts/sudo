@@ -1,0 +1,20 @@
+#!/data/data/com.termux/files/usr/bin/env bash
+
+# sudo -- excute script to become root on android for termux
+
+echo 'Attempting to become root...'
+
+su -c "export LD_LIBRARY_PATH=/data/data/com.termux/files/usr/lib;
+if [[ 'root' -eq $(whoami) ]]; then
+	echo 'You are root.';
+else
+	echo 'You are not root.';
+	exit;
+fi;
+bash;"
+
+if [[ 0 == "$?" ]]; then
+	echo "Good exit status."
+else
+	echo "Bad exit status: $?"
+fi

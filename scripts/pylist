@@ -1,0 +1,123 @@
+#!/data/data/com.termux/files/usr/bin/env bash
+#
+# pylist -- attempts to filters python src files/dirs in a clean way
+#
+# outline:
+# 	[[command] [options] [[arg]...]]
+#	pylist files -> lists only src files
+#	pylist dirs -> lists only directorys
+#
+#	I got tired of writing small snippets of scripts to view
+#	python source files without the bytecode files while filtering
+#	out valid packages (directories) found within the src tree
+#
+#	This way I can cleanly see what src files are available
+#	and the packages that accompany those modules
+#
+
+# log the program name
+PROGNAME="$(basename $0)"
+
+_echo_usage_notice () {
+	echo "Usage: $PROGNAME [ -h | --help | -p | -m | -b ] [ filepath ]"
+}
+
+_echo_usage_summary () {
+	cat <<- _EOF_
+		Usage: $PROGNAME [ -h | -p | -m | -b ] [filepath]
+
+		Summary
+		-------
+		$PROGNAME 		Filter 'ls' output for python source files
+
+		Options
+		-------
+		-h --help 		Display this help text
+		-p --packages 		List only the packages within a source tree
+		-m --modules 		List only the modules within a source tree
+		-b --bytecode 		List only the bytecode within a source tree
+
+		Arguments
+		---------
+		[filepath] 		The path containing the modules or packages
+
+		Examples
+		--------
+		Ex 1: lists only the modules found within the kivy package
+		#	$PROGNAME --modules /usr/lib/python-2.7/dist-packages/kivy
+
+		Ex 2: lists only the packages found within the kivy package
+		#	$PROGNAME -p /usr/lib/python-2.7/dist-packages/kivy
+
+		Ex 3: lists only the bytecode files found with the current working directory
+		#	$PROGNAME -b .
+	_EOF_
+}
+
+# checks to see if param is empty
+_check_if_empty () {
+	filepath="$1"
+
+	# make sure the filepath isn't empty
+	if [[ -z "$filepath" ]]; then
+		echo "No filepath was given."
+		exit
+	fi
+}
+
+# check for positional parameters as arguments
+if (( 0 == $# )); then
+	_echo_usage_notice
+	exit
+else
+	read OPTION FILEPATH <<< "$1 $2"
+fi
+
+# check if positional parameters are options
+case "$OPTION" in
+	-h|--help)
+		_echo_usage_summary
+
+		exit
+		;;
+
+	-p|--packages)
+		_check_if_empty "$FILEPATH"
+
+		for item in ${FILEPATH}/*; do
+			if [[ -d "$item" ]]; then
+				ls -lhHd "${item}/"
+			fi
+		done
+
+		exit
+		;;
+
+	-m|--modules)
+		_check_if_empty "$FILEPATH"
+
+		for item in ${FILEPATH}/*; do
+			if [[ -f "$item" && "$item" =~ \.py$ ]]; then
+				ls -lhH "$item"
+			fi
+		done
+
+		exit
+		;;
+	-b|--bytecode)
+		_check_if_empty "$FILEPATH"
+
+		for item in ${FILEPATH}/*; do
+			if [[ -f "$item" && "$item" =~ \.pyc$ ]]; then
+				ls -lhH "$item"
+			fi
+		done
+
+		exit
+		;;
+	*)
+		_echo_usage_notice
+
+		exit
+		;;
+esac

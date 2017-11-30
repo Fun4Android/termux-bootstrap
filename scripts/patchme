@@ -1,0 +1,150 @@
+#!/data/data/com.termux/files/usr/bin/env bash
+
+# srctest -- compare the dates between two source files
+
+# outline:
+#	[command] [options] [arg] [arg]
+#	srctest source destination
+#
+#	the idea is basically to perform a crude comparison between the
+#	ages of the source file and the destination file, if the
+#	destination file is newer than the source, then the file is NOT
+#	over-written. If the source file is newer than the destination
+#	file, it IS over-written.
+#
+
+declare PROGNAME VERBOSE SOURCE TARGET PATCH
+
+PROGNAME="$(basename $0)"
+SOURCE=
+TARGET=
+PATCH=
+OPTION=
+
+echo_usage_notice () {
+	echo "Usage: $PROGNAME [ -h | -v | -o ] [ source file ] [ target file ]"
+}
+
+echo_usage_summary () {
+	cat <<- _EOF_
+		Usage: $PROGNAME [ option ] [ source file ] [ target file ]
+
+		Summary
+		-------
+		This script attempts to perform a crude comparison between the
+		ages of the source file and the destination file.
+
+		If the destination file is newer than the source, then the file
+		is NOT over written.
+
+		If the source file is newer than the destination file, it IS
+		over written.
+
+		Options
+		-------
+		-h --help 		Displays this help text
+
+		-b --back-up 		Creates a back-up of the original file
+
+		-n --back-up-num 	Creates a numbered back-up of the original file
+
+		-d --dry-run		Dry-run to find errors
+
+		-r --reverse		Reverse a patch
+
+		Arguments
+		---------
+		[source]		The outdated source file (the file to be updated)
+
+		[target]		The updated source file (the file to be used for updating)
+	_EOF_
+}
+
+is_file () {
+	FILE="$1"
+
+	if [[ ! -f "$FILE" ]]; then
+		echo "not ok"
+	fi
+}
+
+file_check () {
+	FILE="$1"
+	if [[ "not ok" == "$(is_file $FILE)" ]]; then
+		echo "Exit: Argument '$FILE' is NOT a file."
+		exit
+	fi
+}
+
+if (( 0 == $# )); then
+	echo_usage_notice
+	exit
+fi
+
+case "$1" in
+	-h|--help)
+		echo_usage_summary
+		exit
+		;;
+	-b|--back-up)
+		OPTION="backup"
+		shift
+		;;
+	-n|--back-up-num)
+		OPTION="numbered"
+		shift
+		;;
+	-d|--dry-run)
+		OPTION="dryrun"
+		shift
+		;;
+	-r|--reverse)
+		OPTION="reverse"
+		shift
+		;;
+	-*)
+		echo_usage_notice
+		exit
+		;;
+esac
+
+SOURCE="$1"
+TARGET="$2"
+
+if [[ "$SOURCE" == "$TARGET" ]]; then
+	echo "Exit: [source] can NOT be equal to [target]"
+	exit
+fi
+
+PATCH="${SOURCE%%.*}.patch"
+
+if [[ -f "$SOURCE" && -f "$TARGET" ]]; then
+	diff -Naur "$SOURCE" "$TARGET" > "$PATCH"
+fi
+
+case "$OPTION" in
+	backup)
+		file_check "$SOURCE"
+		file_check "$TARGET"
+		patch -b < "$PATCH"
+		;;
+	numbered)
+		file_check "$SOURCE"
+		file_check "$TARGET"
+		patch -b -V < "$PATCH"
+		;;
+	dryrun)
+		file_check "$SOURCE"
+		file_check "$TARGET"
+		patch --dry-run < "$PATCH"
+		;;
+	reverse)
+		file_check "$SOURCE"
+		patch -R < "$PATCH"
+		;;
+	*)
+		file_check "$SOURCE"
+		file_check "$TARGET"
+		patch < "$PATCH"
+		;;
+esac

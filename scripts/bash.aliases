@@ -1,0 +1,30 @@
+#
+# /data/data/com.termux/files/home/.bash.aliases
+#
+
+# enable color support of ls and also add handy aliases
+if [ -x "${PREFIX}/bin/dircolors" ];
+    then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=always'
+    # alias dir='dir --color=always'
+    # alias vdir='vdir --color=always'
+
+    # set aliases for grep
+    alias grep='grep --color=always'
+    alias fgrep='fgrep --color=always'
+    alias egrep='egrep --color=always'
+fi
+
+# set aliases for ls
+alias l='ls -HF'
+alias ll='ls -lhFH'
+alias la='ls -lhAFH'
+# list hidden files in current working directory
+# alias lh='ls -ldhFH .[!.]?*'
+
+# make ln, rm, mv, and cp verbose
+alias cp='cp -v'
+alias mv='mv -v'
+alias rm='rm -v'
+alias ln='ln -v'
