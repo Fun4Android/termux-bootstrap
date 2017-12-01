@@ -59,16 +59,8 @@ function source_files () {
 # sources must be loaded in this exact order !
 source_files "config.sh" "help.sh" "install.sh" "remove.sh"
 
-clear
-
-echo -e "Type ${GREEN}help${BLANK} for more information."
-echo -e "\t${GREEN}Usage"
-echo -e "\t\t${RED}-${BLANK}> ${GREEN}help${BLANK}"
-
 cmd="$1"
 action="$2"
-
-read -ep "-> " cmd action
 
 case $cmd in
 	h|help)
