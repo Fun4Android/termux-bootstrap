@@ -41,11 +41,12 @@ declare PYTHON_VERSION="2"
 
 
 function source_files () {
-	for filename in "$@"; do
+	for filename in "$@";
+        do
 		filepath="${PWD}/bootstrap/${filename}"
 
-		if [[ -s "${filepath}" ]]; then
-			source "${filepath}"
+		if [[ -s "${filepath}" ]];
+            then source "${filepath}"
 		else
 			echo -e "Error: '${filename}' is missing or corrupt.\nExiting now."
 			exit $FILE_ERROR
@@ -60,51 +61,50 @@ source_files "config.sh" "help.sh" "install.sh" "remove.sh"
 
 clear
 
-check_if_root
-
-check_environment
-
 echo -e "Type ${GREEN}help${BLANK} for more information."
 echo -e "\t${GREEN}Usage"
 echo -e "\t\t${RED}-${BLANK}> ${GREEN}help${BLANK}"
 
-while true; do
-	cmd=
-	action=
+cmd="$1"
+action="$2"
 
-	read -ep "-> " cmd action
+read -ep "-> " cmd action
 
-	case $cmd in
-		h|help)
-			echo_usage "$action"
-			;;
-		b|backup)
-			backup_home_dir
+case $cmd in
+	h|help)
+		echo_usage "$action"
+		;;
 
-			output_status "${GREEN} * Successful backup.${BLANK}"
-			;;
-		i|install)
-			install "$action"
+	b|backup)
+        check_if_root
+        check_environment
+		backup_home_dir
+		output_status "${GREEN} * Successful backup.${BLANK}"
+		;;
 
-			output_status "${GREEN} * Successful installation.${BLANK}"
-			;;
-		r|remove)
-			remove "$action"
+	i|install)
+        check_if_root
+        check_environment
+		install "$action"
+		output_status "${GREEN} * Successful installation.${BLANK}"
+		;;
+	r|remove)
+        check_if_root
+        check_environment
+		remove "$action"
+		output_status "${GREEN} * Successful removal.${BLANK}"
+		;;
 
-			output_status "${GREEN} * Successful removal.${BLANK}"
-			;;
+	# c|clear)
+	# 	clear
+	# 	;;
+    #
+	# q|quit|e|exit|bye)
+	# 	echo "Bye."
+	# 	break
+	# 	;;
 
-		c|clear)
-			clear
-			;;
-
-		q|quit|e|exit|bye)
-			echo "Bye."
-			break
-			;;
-		*)
-			echo -e "Command: $cmd\tAction: $action"
-			echo_usage_notice
-			;;
-	esac
-done
+	*)
+		echo_usage_notice
+		;;
+esac
