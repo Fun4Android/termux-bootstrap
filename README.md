@@ -42,11 +42,11 @@ $ pwd
 /data/data/com.termux/files/home/termux-bootstrap
 $ ls -l
 total 56
-drwxr-xr-x 2 th3ros th3ros  4096 Nov 29 23:57 bootstrap
--rw-r--r-- 1 th3ros th3ros 18046 Nov 26  2016 LICENSE
--rw-r--r-- 1 th3ros th3ros  2902 Nov 26  2016 README.md
-drwxr-xr-x 2 th3ros th3ros  4096 Nov 30 00:37 scripts
--rwxr-xr-x 1 th3ros th3ros  2162 Nov 30 19:37 termux.bootstrap.sh
+drwxr-xr-x 2 u0_a74 u0_a74  4096 Nov 29 23:57 bootstrap
+-rw-r--r-- 1 u0_a74 u0_a74 18046 Nov 26  2016 LICENSE
+-rw-r--r-- 1 u0_a74 u0_a74  2902 Nov 26  2016 README.md
+drwxr-xr-x 2 u0_a74 u0_a74  4096 Nov 30 00:37 scripts
+-rwxr-xr-x 1 u0_a74 u0_a74  2162 Nov 30 19:37 termux.bootstrap.sh
 $ ./termux.bootstrap.sh
 Usage:
     termux.bootstrap.sh [command] [action]
