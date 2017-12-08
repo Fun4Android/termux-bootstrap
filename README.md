@@ -29,12 +29,25 @@ accidently change any local file permissions.
 
 # install
 ```bash
+# update apt and install git
 $ apt update
-$ apt install git
-$ git clone https://github.com/xovertheyearsx/termux-bootstrap
+$ apt install git -y
+# download the repo and enter the directory
+$ git clone https://github.com/xovertheyearsx/termux-bootstrap.git
 $ cd termux-bootstrap
+# For help
 $ ./termux.bootstrap.sh help
+# For full install
+$ ./termux.bootstrap.sh install
+# For full backup
+$ ./termux.bootstrap.sh backup
+# For full removal - note that sometimes the python2 links can become remnants
+# You can control which version of python gets installed by modifying the global variable $PYTHON_VERSION
+# You can find the $PYTHON_VERSION variable in the termux.bootstrap.sh source file
+$ ./termux.bootstrap.sh remove
 ```
+
+**WARNING**: be sure to move the `archive` directory somewhere safe before issuing the removal command!
 
 # usage
 ```bash
@@ -197,14 +210,21 @@ $ tree $HOME
 
 16 directories, 34 files
 ```
-`bin` and `storage` contain links to active scripts and directories. `bash` has all your scripts. any scripts that you'd like to use can then be linked to `bin` making them globally available within the termux. by default, none of the scripts are executable. you can write up a quick one liner to change this.
+- `bin` and `storage` contain links to active scripts and directories. 
+- `bash` has all your scripts. 
+- any scripts that you'd like to use can then be linked to `bin` making them globally available within the termux. 
+- by default, scripts are executable. you can write up a quick one liner to change this.
+- symbolic links to `bash.bashrc` and `bash.aliases` can be found by using `cd ${PREFIX}/etc`
+- you can customize your `bash.bashrc` and `bash.aliases` configuration files using `vim ~/bash/bash.bashrc ~/bash/bash.aliases`
 
 ```bash
-for script in ${HOME}/bash/*; do if [[ -f "$script" ]]; then chmod -vr 0764 "$script"; fi; done
+for script in ${HOME}/bash/*; do if [[ -f "$script" ]]; then chmod -vr 0644 "$script"; fi; done
 ```
 
-this will make all scripts within the `bash` directory executable.
+this will make all scripts within the `bash` directory non-executable.
 
 **NOTE**: never delete the `bash` directory! termux-bootstrap depends on the `bash` and `archive` directories. the `archive` directory should speak for it self. should you ever want to backup anything, including your environment, you can do so using this directory.
+
+**WARNING**: be sure to move the `archive` directory somewhere safe before issuing the removal command!
 
 **NOTE**: You can always just use termux-bootstrap to automate the backup process for you. Make sure to double check that everything is as expected before officially removing anything by backing it up in the cloud, your local storage, external sd-card, etc. etc.
