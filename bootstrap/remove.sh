@@ -6,44 +6,51 @@
 
 # handle missing bash directory
 _handle_bash_directory_ () {
-	if [[ ! -d "$ARCHIVE" ]]; then
+	if [[ ! -d "$ARCHIVE" ]];
+        then
 		output_status "${RED} * Error${BLANK}: Missing ~/bash directory..." 1
-
 		echo "Exiting now."
-
 		exit $DIR_ERROR
 	fi
 }
 
 # handle bash.bashrc symlink
 _handle_bash_symlink_ () {
+    local bashrc="bash.bashrc"
+    local aliases="bash.aliases"
+
 	# make sure bash.bashrc is symlinked
-	if [[ -L ${ETC}/bash.bashrc ]]; then
-		rm -v ${ETC}/bash.bashrc
+	if [[ -L ${ETC}/${bashrc} ]];
+        then rm -v ${ETC}/${bashrc}
 	fi
+
+    if [[ -L ${ETC}/${aliases} ]];
+        then rm -v ${ETC}/${aliases}
+    fi
 }
 
 # handle missing bash.bashrc file
 _handle_bash_bashrc_ () {
-	# check if original is present
-	if [[ -e "${ARCHIVE}/bash.bashrc.original" ]]; then
-		output_status "${GREEN} * ${BLANK} Restored original bash.bashrc file..." 1
+    local bashrc=bash.bashrc
+    local skeleton=bash.bashrc.skeleton
+    local aliases=bash.aliases
 
-		mv -v ${ARCHIVE}/bash.bashrc.skeleton ${ETC}/bash.bashrc
+	# check if original is present
+	if [[ -e "${ARCHIVE}/${skeleton}" ]];
+        then
+		output_status "${GREEN} * ${BLANK} Restored original ${bashrc} file..." 1
+		mv -v ${ARCHIVE}/${skeleton} ${ETC}/${bashrc}
 
 	# if original is missing, check if auto-generated script is present
-	elif [[ -e ${ARCHIVE}/bash.bashrc ]]; then
-		output_status "${YELLOW} * Exception${BLANK}: Missing bash.bashrc.backup file..." 1
-
-		mv -v ${ARCHIVE}/bash.bashrc ${ETC}/bash.bashrc
+    elif [[ -e ${ARCHIVE}/${bashrc} ]];
+        then
+		output_status "${YELLOW} * Exception${BLANK}: Missing ${skeleton} file..." 1
+		mv -v ${ARCHIVE}/${bashrc} ${ETC}/${bashrc}
+        mv -v ${ARCHIVE}/${aliases} ${ETC}/${aliases}
 
 	# else refuse to leave bash configuration unhandled
 	else
-		output_status "${RED} * Error${BLANK}: Missing bash.bashrc file..." 1
-
-		echo "Exiting now."
-
-		exit $FILE_ERROR
+		output_status "${RED} * Error${BLANK}: Missing ${bashrc} file..." 1
 	fi
 }
 
@@ -69,8 +76,7 @@ remove_apps () {
         then apt remove python python2 -y
     fi
 
-	apt autoremove
-
+	apt autoremove -y
 	apt autoclean
 }
 
@@ -88,7 +94,7 @@ remove_scripts () {
 	_handle_bash_bashrc_
 
 	# remove core scripts
-	rm -v ${ARCHIVE}/* ${BIN}/* ${HOME}/.vimrc ${HOME}/.gitconfig
+	rm -v ${ARCHIVE}/* ${BIN}/* ${HOME}/.vimrc ${HOME}/.gitconfig ${HOME}/.viminfo
 }
 
 # wrapper for removing HOME directories
@@ -119,31 +125,24 @@ remove () {
 	case "$action" in
 		all)
 			remove_scripts
-
 			remove_local_storage
-
             remove_apps
 			;;
 
 		apps)
 			remove_apps
-
 			;;
 
 		scripts)
 			remove_scripts
-
 			;;
 
 		storage)
 			remove_local_storage
-
 			;;
 
 		*)
 			echo_usage_notice
-
-			exit $FAILURE
 			;;
 	esac
 }
