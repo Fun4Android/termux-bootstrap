@@ -14,8 +14,10 @@ else
 fi;
 bash;"
 
-if [[ 0 == "$?" ]]; then
+declare -r status="$?"
+
+if [[ "0" == "$status" ]]; then
 	echo "Good exit status."
 else
-	echo "Bad exit status: $?"
+	echo "Bad exit status: $status"
 fi
