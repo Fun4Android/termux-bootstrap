@@ -70,6 +70,9 @@ remove_apps () {
 
     if [[ "2" == "${PYTHON_VERSION}" ]];
         then
+        # removal of python2 links is not guaranteed
+        # the environment is usually destroyed by this point and rm has no reference point
+        # /data/data/com.termux/files/home/termux-bootstrap/bootstrap/remove.sh: line 74: /data/data/com.termux/files/usr/bin/rm: No such file or directory
         apt remove python2 -y
         rm -v ${PREFIX}/bin/python ${PREFIX}/bin/pip
     elif [[ "3" == "${PYTHON_VERSION}" ]];
