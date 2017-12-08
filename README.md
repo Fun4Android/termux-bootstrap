@@ -6,7 +6,7 @@
 5. [summary](https://github.com/xovertheyearsx/termux-bootstrap#summary)
 6. [options](https://github.com/xovertheyearsx/termux-bootstrap#options)
 7. [arguments](https://github.com/xovertheyearsx/termux-bootstrap#arguments)
-8. [environment]()
+8. [environment](https://github.com/xovertheyearsx/termux-bootstrap#environment)
 
 # termux-bootstrap
 Automates base installation and configuration for [Termux](https://termux.com/)
