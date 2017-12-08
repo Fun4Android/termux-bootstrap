@@ -56,8 +56,14 @@ _require_dirs_ () {
 _install_archive_ () {
     output_status "${GREEN} * ${BLANK}Populating archive with base scripts..." 1
 
+    # copy scripts to user environment
     for script in ${SCRIPTS}/*;
         do cp "$script" ${ARCHIVE}/
+    done
+
+    # make scripts executable by default
+    for script in ${ARCHIVE}/*;
+        do chmod 0764 "$script"
     done
 }
 

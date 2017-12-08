@@ -80,21 +80,13 @@ case $cmd in
 		install "$action"
 		output_status "${GREEN} * Successful installation.${BLANK}"
 		;;
+
 	r|remove)
         check_if_root
         check_environment
 		remove "$action"
 		output_status "${GREEN} * Successful removal.${BLANK}"
 		;;
-
-	# c|clear)
-	# 	clear
-	# 	;;
-    #
-	# q|quit|e|exit|bye)
-	# 	echo "Bye."
-	# 	break
-	# 	;;
 
 	*)
 		echo_usage_notice
