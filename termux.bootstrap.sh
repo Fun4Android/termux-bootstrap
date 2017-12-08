@@ -71,21 +71,21 @@ case $cmd in
         check_if_root
         check_environment
 		backup_home_dir
-		output_status "${GREEN} * Successful backup.${BLANK}"
+		echo -e "${GREEN} * Successful backup.${BLANK}"
 		;;
 
 	i|install)
         check_if_root
         check_environment
 		install "$action"
-		output_status "${GREEN} * Successful installation.${BLANK}"
+		echo -e "${GREEN} * Successful installation.${BLANK}"
 		;;
 
 	r|remove)
         check_if_root
         check_environment
 		remove "$action"
-		output_status "${GREEN} * Successful removal.${BLANK}"
+		echo -e "${GREEN} * Successful removal.${BLANK}"
 		;;
 
 	*)

@@ -69,7 +69,9 @@ remove_apps () {
     openssh wget -y
 
     if [[ "2" == "${PYTHON_VERSION}" ]];
-        then apt remove python2 -y
+        then
+        apt remove python2 -y
+        rm -v ${PREFIX}/bin/python ${PREFIX}/bin/pip
     elif [[ "3" == "${PYTHON_VERSION}" ]];
         then apt remove python -y
     elif [[ "both" == "${PYTHON_VERSION}" ]];
