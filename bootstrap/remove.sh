@@ -50,7 +50,7 @@ _handle_bash_bashrc_ () {
 
 	# else refuse to leave bash configuration unhandled
 	else
-		output_status "${RED} * Error${BLANK}: Missing ${bashrc} file..." 1
+		output_status "${YELLOW} * Warning${BLANK}: Missing ${bashrc} file..." 1
 	fi
 }
 
@@ -123,6 +123,10 @@ remove_local_storage () {
 # execute install action
 remove () {
 	local action="$1"
+
+    if [[ -z "$action" ]];
+        then action="all"
+    fi
 
 	case "$action" in
 		all)
