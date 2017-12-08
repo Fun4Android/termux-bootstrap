@@ -1,12 +1,22 @@
+# contents
+1. [termux-bootstrap](https://github.com/xovertheyearsx/termux-bootstrap#termux-bootstrap)
+2. [synopsis](https://github.com/xovertheyearsx/termux-bootstrap#synopsis)
+3. [install](https://github.com/xovertheyearsx/termux-bootstrap#install)
+4. [usage](https://github.com/xovertheyearsx/termux-bootstrap#usage)
+5. [summary](https://github.com/xovertheyearsx/termux-bootstrap#summary)
+6. [options](https://github.com/xovertheyearsx/termux-bootstrap#options)
+7. [arguments](https://github.com/xovertheyearsx/termux-bootstrap#arguments)
+8. [environment]()
+
 # termux-bootstrap
-Automates base installation and configuration for Termux
+Automates base installation and configuration for [Termux](https://termux.com/)
 
 Note: This project is still under development and may cause issues within your
 termux environment. If you find any bugs, fixes, or have any suggestions feel free
 to contribute.
 
 # synopsis 
-When you first install Termux on your Andriod device, you're left with a barebones
+When you first install [Termux](https://termux.com/) on your Andriod device, you're left with a barebones
 set-up. 
 
 This script installs all the common basic utilities and tools used for
@@ -18,55 +28,59 @@ The script will fail if you attempt to execute it as root so that you don't
 accidently change any local file permissions.
 
 # install
-    apt update
-    apt install git
-    git clone https://github.com/xovertheyearsx/termux-bootstrap
-    cd termux-bootstrap
-    ./termux.bootstrap.sh help
+```bash
+$ apt update
+$ apt install git
+$ git clone https://github.com/xovertheyearsx/termux-bootstrap
+$ cd termux-bootstrap
+$ ./termux.bootstrap.sh help
+```
 
 # usage
-    $ pwd
-    /data/data/com.termux/files/home/termux-bootstrap
-    $ ls -l
-    total 56
-    drwxr-xr-x 2 th3ros th3ros  4096 Nov 29 23:57 bootstrap
-    -rw-r--r-- 1 th3ros th3ros 18046 Nov 26  2016 LICENSE
-    -rw-r--r-- 1 th3ros th3ros  2902 Nov 26  2016 README.md
-    drwxr-xr-x 2 th3ros th3ros  4096 Nov 30 00:37 scripts
-    -rwxr-xr-x 1 th3ros th3ros  2162 Nov 30 19:37 termux.bootstrap.sh
-    $ ./termux.bootstrap.sh
-    Usage:
-        termux.bootstrap.sh [command] [action]
-        termux.bootstrap.sh help [command]
-    $ ./termux.bootstrap.sh help
-    Command -> help
+```bash
+$ pwd
+/data/data/com.termux/files/home/termux-bootstrap
+$ ls -l
+total 56
+drwxr-xr-x 2 th3ros th3ros  4096 Nov 29 23:57 bootstrap
+-rw-r--r-- 1 th3ros th3ros 18046 Nov 26  2016 LICENSE
+-rw-r--r-- 1 th3ros th3ros  2902 Nov 26  2016 README.md
+drwxr-xr-x 2 th3ros th3ros  4096 Nov 30 00:37 scripts
+-rwxr-xr-x 1 th3ros th3ros  2162 Nov 30 19:37 termux.bootstrap.sh
+$ ./termux.bootstrap.sh
+Usage:
+    termux.bootstrap.sh [command] [action]
+    termux.bootstrap.sh help [command]
+$ ./termux.bootstrap.sh help
+Command -> help
 
-    For a list of all commands and actions.
+For a list of all commands and actions.
 
-    	Usage
-    		-> help commands
+	Usage
+		-> help commands
 
-    For information about a specific command.
+For information about a specific command.
 
-            Usage
-    		-> help [command]
+    Usage
+        -> help [command]
 
-    # USAGE
-    $ ./termux.bootstrap.sh help usage | less
-    ...press q to quit less...
+# USAGE
+$ ./termux.bootstrap.sh help usage | less
+...press q to quit less...
     
-    # COMMANDS
-    $ ./termux.bootstrap.sh help commands | less
-    ...press q to quit less...
-    
-    # FULL INSTALL
-    $ ./termux.bootstrap.sh install all
-    ...prints actions to standard output...
+# COMMANDS
+$ ./termux.bootstrap.sh help commands | less
+...press q to quit less...
+   
+# FULL INSTALL
+$ ./termux.bootstrap.sh install all
+...prints actions to standard output...
 
-    # PARTIAL INSTALL
-    # sometimes after a playstore update, the environment will be in a broken state
-    # to restore the previous config state, just do a partial install
-    $ ./termux.bootstrap.sh install scripts
+# PARTIAL INSTALL
+# sometimes after a playstore update, the environment will be in a broken state
+# to restore the previous config state, just do a partial install
+$ ./termux.bootstrap.sh install scripts
+```
 
 # summary
 termux.bootstrap.sh installs all the base applications, scripts, and configuration files used for base development in Termux. This way you can do Bash, C, C++, python2, python3, or whatever your heart desires on the go.
@@ -122,3 +136,75 @@ This will backup the entire HOME directory which is stored within a tar file. Th
 							
 			All directories created by termux.bootstrap.sh
 				storage bin bash c cpp python
+
+# environment
+After installing termux using google playstore, using termux-bootstrap to configure your environment, and installing `tree` using `apt`, you can get glimpse of the directory and file structure.
+
+```bash
+$ apt install tree
+$ tree $HOME
+.
+├── archive
+├── bash
+│   ├── bash.aliases
+│   ├── bash.bashrc
+│   ├── bash.bashrc.default
+│   ├── bash.bashrc.skeleton
+│   ├── mkscript
+│   ├── mkscript.config
+│   ├── patchme
+│   ├── pylist
+│   ├── sudo
+│   ├── update
+│   └── vimrc
+├── bin
+│   ├── mkscript -> /data/data/com.termux/files/home/bash/mkscript
+│   ├── mkscript.config -> /data/data/com.termux/files/home/bash/mkscript.config
+│   ├── patchme -> /data/data/com.termux/files/home/bash/patchme
+│   ├── pylist -> /data/data/com.termux/files/home/bash/pylist
+│   ├── sudo -> /data/data/com.termux/files/home/bash/sudo
+│   └── update -> /data/data/com.termux/files/home/bash/update
+├── c
+├── cpp
+├── python
+├── storage
+│   ├── dcim -> /storage/emulated/0/DCIM
+│   ├── downloads -> /storage/emulated/0/Download
+│   ├── movies -> /storage/emulated/0/Movies
+│   ├── music -> /storage/emulated/0/Music
+│   ├── pictures -> /storage/emulated/0/Pictures
+│   └── shared -> /storage/emulated/0
+└── termux-bootstrap
+    ├── LICENSE
+    ├── README.md
+    ├── bootstrap
+    │   ├── config.sh
+    │   ├── help.sh
+    │   ├── install.sh
+    │   └── remove.sh
+    ├── scripts
+    │   ├── bash.aliases
+    │   ├── bash.bashrc
+    │   ├── bash.bashrc.default
+    │   ├── mkscript
+    │   ├── mkscript.config
+    │   ├── patchme
+    │   ├── pylist
+    │   ├── sudo
+    │   ├── update
+    │   └── vimrc
+    └── termux.bootstrap.sh
+
+16 directories, 34 files
+```
+`bin` and `storage` contain links to active scripts and directories. `bash` has all your scripts. any scripts that you'd like to use can then be linked to `bin` making them globally available within the termux. by default, none of the scripts are executable. you can write up a quick one liner to change this.
+
+```bash
+for script in ${HOME}/bash/*; do if [[ -f "$script" ]]; then chmod -vr 0764 "$script"; fi; done
+```
+
+this will make all scripts within the `bash` directory executable.
+
+**NOTE**: never delete the `bash` directory! termux-bootstrap depends on the `bash` and `archive` directories. the `archive` directory should speak for it self. should you ever want to backup anything, including your environment, you can do so using this directory.
+
+**NOTE**: You can always just use termux-bootstrap to automate the backup process for you. Make sure to double check that everything is as expected before officially removing anything by backing it up in the cloud, your local storage, external sd-card, etc. etc.
