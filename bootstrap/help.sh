@@ -52,12 +52,6 @@ Commands
 	b | backup
 		Backs up the current HOME directory
 
-	c | clear
-		Clears the screen.
-
-	q | quit | bye
-		Quits this program.
-
 Actions
 -------
 	[ all  ]
@@ -216,12 +210,6 @@ echo_usage () {
 		backup)
 			echo_usage_remove
 			;;
-		# clear)
-		# 	echo_usage_clear
-		# 	;;
-		# quit|bye)
-		# 	echo_usage_quit
-		# 	;;
 		*)
 			echo_usage_summary
 			;;
