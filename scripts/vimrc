@@ -1,11 +1,19 @@
-:set number          " use numbered lines
-:set background=dark " Use bright text colors against a dark background
-:set tabstop=4       " The width of a TAB is set to 4.
-                     " Still it is a \t. It is just that
-                     " Vim will interpret it to be having
-                     " a width of 4.
-:set softtabstop=4   " Sets the number of columns for a TAB
-:set shiftwidth=4    " Indents will have a width of 4
-:set expandtab       " Expand TABs to spaces
-:set autoindent      " Use automatic indentation
-:syntax on           " Use syntax highlighting
+" NOTE: use ':%retab' to replace all tabs with spaces within a file
+"filetype plugin indent on  " 'smartindent' was replaced by 'cindent' 
+                            " which is C-style only syntax.
+                            " Turning on either can be a problem when 
+                            " working with other languages.
+                            " Using the 'filetype' plugin fixes this.
+:set number                 " Use numbered lines.
+:set background=dark        " Use bright text colors against a dark background.
+:set tabstop=4              " The width of a TAB is set to 4.
+                            " Still it is a \t. It is just that
+                            " Vim will interpret it to be having
+                            " a width of 4.
+:set softtabstop=0          " Sets the number of columns for a TAB.
+:set shiftwidth=4           " Indents will have a width of 4.
+:set expandtab              " Expand TABs to spaces.
+                            " Comment out the 'expandtab' line if you prefer 
+                            " tabs over spaces.
+:set autoindent             " Use automatic indentation.
+:syntax on                  " Use syntax highlighting.
